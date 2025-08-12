@@ -1,0 +1,39 @@
+name: CI/CD for WordPress Docker App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/wordpress-app:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/wordpress-app:latest
+
+      - name: SSH into Droplet and Deploy
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.DIGITALOCEAN_IP }}
+          username: root
+          key: ${{ secrets.DIGITALOCEAN_SSH_KEY }}
+          port: 22
+          script: |
+            cd /path/to/your/app
+            docker-compose pull
+            docker-compose up -d
