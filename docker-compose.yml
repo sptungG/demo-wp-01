@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 services:
   db:
@@ -12,14 +12,13 @@ services:
       MYSQL_DATABASE: wordpress
       MYSQL_USER: wordpress
       MYSQL_PASSWORD: wordpress
-    # Add a healthcheck to ensure the database is ready
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      # Use a simpler healthcheck that just pings the database server
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
 
   wordpress:
-    # Use depends_on with condition to wait for the database healthcheck
     depends_on:
       db:
         condition: service_healthy
@@ -29,12 +28,10 @@ services:
       - "8000:80"
     restart: always
     environment:
-      # Change DB host to just the service name
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
       WORDPRESS_DB_NAME: wordpress
-    # Map a volume for all WordPress files
     volumes:
       - wordpress_data:/var/www/html
       - ./php.ini:/usr/local/etc/php/conf.d/uploads.ini
