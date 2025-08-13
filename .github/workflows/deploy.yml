@@ -34,6 +34,6 @@ jobs:
           password: ${{ secrets.DIGITALOCEAN_PASSWORD }}
           port: 22
           script: |
-            cd /demo-wp-01
+            cd ~/demo-wp-01
             docker-compose pull
             docker-compose up -d
