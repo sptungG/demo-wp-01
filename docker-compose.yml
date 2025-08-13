@@ -22,7 +22,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    image: wordpress:php8.2-apache
+    build: .
     platform: linux/arm64
     ports:
       - "8000:80"
@@ -34,7 +34,6 @@ services:
       WORDPRESS_DB_NAME: wordpress
     volumes:
       - wordpress_data:/var/www/html
-      - ./php.ini:/usr/local/etc/php/conf.d/uploads.ini
 
 volumes:
   db_data:
