@@ -5,31 +5,29 @@ services:
     image: wordpress:latest
     container_name: wordpress
     ports:
-      - 80:80
+      - "80:80"
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_NAME: wordpress
-      WORDPRESS_DB_USER: root
-      WORDPRESS_DB_PASSWORD: example
+      WORDPRESS_DB_USER: wp_user
+      WORDPRESS_DB_PASSWORD: password
     volumes:
       - wordpress_data:/var/www/html
     networks:
       - wordpress_network
-    platform: linux/amd64
 
   db:
-    image: mariadb:10.5   # Changed to MariaDB
+    image: mysql:5.7
     container_name: db
     environment:
-      MYSQL_ROOT_PASSWORD: example
+      MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: wordpress
-      MYSQL_USER: wordpress_user
-      MYSQL_PASSWORD: wordpress_password
+      MYSQL_USER: wp_user
+      MYSQL_PASSWORD: password
     volumes:
       - db_data:/var/lib/mysql
     networks:
       - wordpress_network
-    platform: linux/amd64
 
 volumes:
   wordpress_data:

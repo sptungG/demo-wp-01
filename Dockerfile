@@ -1,9 +1,9 @@
-FROM wordpress:php8.2-apache
+FROM wordpress:latest
 
-# Copy custom php configuration
-COPY php.ini /usr/local/etc/php/conf.d/uploads.ini
+# Set environment variables for database and WordPress configurations
+ENV WORDPRESS_DB_HOST=db:3306
+ENV WORDPRESS_DB_NAME=wordpress
+ENV WORDPRESS_DB_USER=wp_user
+ENV WORDPRESS_DB_PASSWORD=password
 
-# Copy custom themes and plugins.
-# This will overwrite the default wp-content directory in the image.
-# Ensure your local wp-content is what you want to use.
-COPY ./wp-content /var/www/html/wp-content
+EXPOSE 80
