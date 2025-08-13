@@ -1,43 +1,40 @@
-services:
-  db:
-    image: mariadb:10.6
-    platform: linux/arm64
-    volumes:
-      - db_data:/var/lib/mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: somewordpress
-      MYSQL_DATABASE: wordpress
-      MYSQL_USER: wordpress
-      MYSQL_PASSWORD: wordpress
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-psomewordpress"]
-      timeout: 200s
-      retries: 100
+version: '3.7'
 
+services:
   wordpress:
-    depends_on:
-      db:
-        condition: service_healthy
     image: wordpress:latest
-    platform: linux/arm64
+    container_name: wordpress
     ports:
-      - "8000:80"
-    restart: always
+      - 80:80
     environment:
-      WORDPRESS_DB_HOST: db
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: root
+      WORDPRESS_DB_PASSWORD: example
     volumes:
       - wordpress_data:/var/www/html
-    healthcheck:
-      # This checks for a string that always appears on the login page, avoiding problems with redirects
-      test: ["CMD", "curl", "-fsSL", "http://localhost/wp-login.php"]
-      interval: 100ms
-      timeout: 100s
-      retries: 100
+    networks:
+      - wordpress_network
+    platform: linux/amd64
+
+  db:
+    image: mariadb:10.5   # Changed to MariaDB
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress_user
+      MYSQL_PASSWORD: wordpress_password
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - wordpress_network
+    platform: linux/amd64
 
 volumes:
-  db_data:
   wordpress_data:
+  db_data:
+
+networks:
+  wordpress_network:
+    driver: bridge
