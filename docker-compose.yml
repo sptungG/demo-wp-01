@@ -13,8 +13,7 @@ services:
       MYSQL_USER: wordpress
       MYSQL_PASSWORD: wordpress
     healthcheck:
-      # Use a simpler healthcheck that just pings the database server
-      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-psomewordpress"]
       timeout: 20s
       retries: 10
 
@@ -22,7 +21,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    build: .
+    image: wordpress:latest
     platform: linux/arm64
     ports:
       - "8000:80"
@@ -34,6 +33,11 @@ services:
       WORDPRESS_DB_NAME: wordpress
     volumes:
       - wordpress_data:/var/www/html
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 1m
+      timeout: 10s
+      retries: 10
 
 volumes:
   db_data:
