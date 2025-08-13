@@ -27,8 +27,8 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t myusername/wordpress:latest .
-          docker push myusername/wordpress:latest
+          docker build -t tungnvv1/wordpress:latest .
+          docker push tungnvv1/wordpress:latest
 
       - name: Deploy to DigitalOcean
         run: |
