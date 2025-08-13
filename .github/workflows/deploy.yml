@@ -34,6 +34,6 @@ jobs:
           key: ${{ secrets.DIGITALOCEAN_SSH_KEY }}
           port: 22
           script: |
-            cd /path/to/your/app
+            cd /demo-wp-01
             docker-compose pull
             docker-compose up -d
