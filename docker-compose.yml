@@ -12,6 +12,11 @@ services:
       MYSQL_DATABASE: wordpress
       MYSQL_USER: wordpress
       MYSQL_PASSWORD: wordpress
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-psomewordpress"]
+      timeout: 200s
+      retries: 100
+
   wordpress:
     depends_on:
       db:
@@ -28,6 +33,12 @@ services:
       WORDPRESS_DB_NAME: wordpress
     volumes:
       - wordpress_data:/var/www/html
+    healthcheck:
+      # This checks for a string that always appears on the login page, avoiding problems with redirects
+      test: ["CMD", "curl", "-fsSL", "http://localhost/wp-login.php"]
+      interval: 100ms
+      timeout: 100s
+      retries: 100
 
 volumes:
   db_data:
